@@ -1,0 +1,49 @@
+# -*- coding: utf-8 -*-
+import streamlit as st
+import sys
+import traceback
+
+st.set_page_config(page_title="Convertidor °C ↔ °F", page_icon="🌡️", layout="centered")
+
+def c_to_f(c: float) -> float:
+    return (c * 9.0 / 5.0) + 32.0
+
+def f_to_c(f: float) -> float:
+    return (f - 32.0) * 5.0 / 9.0
+
+def main():
+    try:
+        st.title("🌡️ Convertidor de temperatura")
+        st.write("Convierte entre **Celsius (°C)** y **Fahrenheit (°F)**. Elige el modo en la barra lateral.")
+
+        # Sidebar: opciones
+        st.sidebar.header("Configuración")
+        mode = st.sidebar.radio("Modo", ("Celsius → Fahrenheit", "Fahrenheit → Celsius", "Bidireccional"))
+        decimals = st.sidebar.slider("Decimales a mostrar", 0, 6, 2)
+
+        # Form para evitar recargas inesperadas
+        with st.form(key="conversion_form"):
+            if mode == "Celsius → Fahrenheit":
+                c = st.number_input("Temperatura (°C):", value=0.0, format="%.2f", step=0.1)
+                submit = st.form_submit_button("Convertir")
+                if submit:
+                    f = c_to_f(c)
+                    st.success(f"{c:.{decimals}f} °C = {f:.{decimals}f} °F")
+                    st.metric("Resultado (°F)", f"{f:.{decimals}f}")
+            elif mode == "Fahrenheit → Celsius":
+                f = st.number_input("Temperatura (°F):", value=32.0, format="%.2f", step=0.1)
+                submit = st.form_submit_button("Convertir")
+                if submit:
+                    c = f_to_c(f)
+                    st.success(f"{f:.{decimals}f} °F = {c:.{decimals}f} °C")
+                    st.metric("Resultado (°C)", f"{c:.{decimals}f}")
+            else:  # Bidireccional
+                c = st.number_input("Celsius (°C):", value=0.0, format="%.2f", step=0.1, key="c_bid")
+                f = st.number_input("Fahrenheit (°F):", value=32.0, format="%.2f", step=0.1, key="f_bid")
+                submit = st.form_submit_button("Actualizar")
+                if submit:
+                    # Si el usuario cambió Celsius, calcular Fahrenheit; si cambió Fahrenheit, calcular Celsius.
+                    # Para simplicidad: recalculamos ambos y mostramos ambos resultados.
+                    f_from_c = c_to_f(c)
+                    c_from_f = f_to_c(f)
+                    st.write(f"Desde {c:.{
