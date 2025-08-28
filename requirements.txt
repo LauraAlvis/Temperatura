@@ -46,4 +46,27 @@ def main():
                     # Para simplicidad: recalculamos ambos y mostramos ambos resultados.
                     f_from_c = c_to_f(c)
                     c_from_f = f_to_c(f)
-                    st.write(f"Desde {c:.{
+                    st.write(f"Desde {c:.{decimals}f} °C → {f_from_c:.{decimals}f} °F")
+                    st.write(f"Desde {f:.{decimals}f} °F → {c_from_f:.{decimals}f} °C")
+
+        st.markdown("---")
+        st.subheader("Fórmulas")
+        st.latex(r"°F = (°C \times \frac{9}{5}) + 32")
+        st.latex(r"°C = (°F - 32) \times \frac{5}{9}")
+
+        with st.expander("Información técnica / Debug"):
+            st.write(f"Python: `{sys.version.split()[0]}`")
+            try:
+                st.write(f"Streamlit: `{st.__version__}`")
+            except Exception:
+                st.write("No se pudo leer la versión de Streamlit")
+            st.write("Si la app aparece en blanco al desplegar, revisa los logs del servicio (Streamlit Cloud → Manage app → Logs).")
+    except Exception as e:
+        # Capturamos cualquier excepción y la mostramos en la UI para evitar pantalla en blanco
+        st.error("Se produjo un error al ejecutar la aplicación.")
+        st.text("Traceback (información técnica):")
+        st.text(traceback.format_exc())
+
+if __name__ == "__main__":
+    main()
+
